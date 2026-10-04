@@ -3,8 +3,10 @@ const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder, EmbedBuild
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
-// REPLACE THIS WITH YOUR RAW GITHUB IMAGE LINK
-const LOGO_URL = 'PASTE_RAW_LINK_HERE'; 
+// OPTIONAL: leave as is if you don't want a banner yet.
+// When ready, replace with your raw image URL.
+const LOGO_URL = 'PASTE_RAW_LINK_HERE';
+const HAS_LOGO = LOGO_URL.startsWith('http');
 
 const commands = [
     new SlashCommandBuilder()
@@ -93,9 +95,15 @@ client.on('interactionCreate', async interaction => {
                 '━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
                 '💥 For resellers with consistent volume — enjoy exclusive price reductions on larger orders.\n' +
                 '🔥 **Purchase 10+ Keys and Get 60% OFF** (Unbranded Loaders)!\n'
-            )
-            .setImage(LOGO_URL)
-            .setFooter({ text: 'NEXY Reseller Program', iconURL: LOGO_URL });
+            );
+
+        // Only add banner/footer icon if a real link exists
+        if (HAS_LOGO) {
+            embed.setImage(LOGO_URL);
+            embed.setFooter({ text: 'NEXY Reseller Program', iconURL: LOGO_URL });
+        } else {
+            embed.setFooter({ text: 'NEXY Reseller Program' });
+        }
 
         try {
             await interaction.channel.send({ embeds: [embed] });
@@ -117,7 +125,6 @@ client.on('interactionCreate', async interaction => {
         const nowUnix = Math.floor(now.getTime() / 1000);
         const nextUnix = Math.floor(oneMonthLater.getTime() / 1000);
 
-        // Pretty formatted strings
         const nowPretty = now.toLocaleString('en-GB', {
             weekday: 'long', day: '2-digit', month: 'long', year: 'numeric',
             hour: '2-digit', minute: '2-digit', timeZoneName: 'short'
@@ -145,8 +152,7 @@ client.on('interactionCreate', async interaction => {
 
                 '━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
                 `🧮 **Total Days:** ${Math.round((nextUnix - nowUnix) / 86400)} days`
-            )
-            .setFooter({ text: 'NEXY Reseller Program', iconURL: LOGO_URL });
+            );
 
         try {
             await interaction.editReply({ embeds: [embed] });
