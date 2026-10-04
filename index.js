@@ -10,6 +10,9 @@ const commands = [
     new SlashCommandBuilder()
         .setName('panel')
         .setDescription('Sends the NEXY reseller panel in this channel.'),
+    new SlashCommandBuilder()
+        .setName('timer')
+        .setDescription('Shows the current date and the date one month from now.'),
 ].map(command => command.toJSON());
 
 client.on('ready', async () => {
@@ -28,14 +31,13 @@ client.on('ready', async () => {
 
 client.on('interactionCreate', async interaction => {
     if (!interaction.isChatInputCommand()) return;
-    
+
+    // ─────────────────────────── /PANEL ───────────────────────────
     if (interaction.commandName === 'panel') {
-        // 1. Defer the reply immediately to stop the timeout
         await interaction.deferReply({ ephemeral: true });
 
         const roleId = process.env.ROLE_ID || '1555865533226680320';
-        
-        // 2. Check if user has the specific role
+
         if (!interaction.member || !interaction.member.roles.cache.has(roleId)) {
             return interaction.editReply({ 
                 content: 'You do not have permission to use this command.' 
@@ -43,57 +45,114 @@ client.on('interactionCreate', async interaction => {
         }
 
         const embed = new EmbedBuilder()
-            .setTitle('NEXY — Reseller Program')
-            .setColor('#FF10F0') // Neon Pink
+            .setTitle('✨ NEXY — Reseller Program ✨')
+            .setColor('#FF10F0')
             .setDescription(
-                '➳ 15,000+ Devices Successfully Spoofed\n' +
-                '➳ One of the most trusted brands in the scene.\n' +
-                '➳ Over 40 official resellers.\n\n' +
-                
-                '✅ **Why Resell with NEXY?**\n' +
-                '• Strong and respected reputation in the community\n' +
-                '• Knowledgeable support team\n' +
-                '• GitBook Instructions included\n' +
-                '• Secured loader infrastructure\n' +
-                '• Easy rebranding process\n' +
-                '• No community presence required\n\n' +
-                
-                '✅ **Panel Access**\n' +
-                '**General Spoofer**\n' +
-                '🔹 Spoofer Hub | $300 / Lifetime (Unbranded)\n' +
-                '🔹 Spoofer Hub | $800 / Lifetime (Full rebrand: name, logo, colors)\n' +
-                '🔹 Spoofer Hub | $150 / Monthly (Unbranded)\n' +
-                '🔹 Spoofer Hub | $200 / Monthly (Full rebrand: name, logo, colors)\n' +
-                '🔹 Temp Spoofer | $150 / Monthly (Unbranded)\n' +
-                '🔹 Temp Spoofer | $200 / Monthly (Full rebrand: name, logo, colors)\n\n' +
-                
-                '**Fortnite Cheats**\n' +
-                '🔹 Spoofer Hub | $300 / Lifetime (Unbranded)\n' +
-                '🔹 Spoofer Hub | $800 / Lifetime (Full rebrand: name, logo, colors)\n' +
-                '🔹 Spoofer Hub | $150 / Monthly (Unbranded)\n' +
-                '🔹 Spoofer Hub | $200 / Monthly (Full rebrand: name, logo, colors)\n\n' +
-                
-                '**Rust Cheats**\n' +
-                '🔹 Spoofer Hub | $300 / Lifetime (Unbranded)\n' +
-                '🔹 Spoofer Hub | $800 / Lifetime (Full rebrand: name, logo, colors)\n' +
-                '🔹 Spoofer Hub | $150 / Monthly (Unbranded)\n' +
-                '🔹 Spoofer Hub | $200 / Monthly (Full rebrand: name, logo, colors)\n\n' +
-                
-                '✅ **Bulk Key Discounts**\n' +
-                'For resellers with consistent volume — enjoy exclusive price reductions on larger orders.\n' +
-                '➳ Purchase 10+ Keys and Get 60% Off (Unbranded Loaders)!'
+                '💠 **15,000+** Devices Successfully Spoofed\n' +
+                '💠 One of the most trusted brands in the scene\n' +
+                '💠 Over **40 official resellers**\n\n' +
+
+                '━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
+                '🌟 **Why Resell with NEXY?**\n' +
+                '━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
+                '✅ Strong and respected reputation in the community\n' +
+                '✅ Knowledgeable support team\n' +
+                '✅ GitBook Instructions included\n' +
+                '✅ Secured loader infrastructure\n' +
+                '✅ Easy rebranding process\n' +
+                '✅ No community presence required\n\n' +
+
+                '━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
+                '🛒 **Panel Access**\n' +
+                '━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n' +
+
+                '🎮 **General Spoofer**\n' +
+                '├ 📅 **Monthly — Unbranded** ─ **$150**\n' +
+                '├ 📅 **Monthly — Full Rebrand** ─ **$200**\n' +
+                '├ ♾️ **Lifetime — Unbranded** ─ **$300**\n' +
+                '└ ♾️ **Lifetime — Full Rebrand** ─ **$800**\n\n' +
+
+                '🎮 **Temp Spoofer**\n' +
+                '├ 📅 **Monthly — Unbranded** ─ **$150**\n' +
+                '└ 📅 **Monthly — Full Rebrand** ─ **$200**\n\n' +
+
+                '🎯 **Fortnite Cheats**\n' +
+                '├ 📅 **Monthly — Unbranded** ─ **$150**\n' +
+                '├ 📅 **Monthly — Full Rebrand** ─ **$200**\n' +
+                '├ ♾️ **Lifetime — Unbranded** ─ **$300**\n' +
+                '└ ♾️ **Lifetime — Full Rebrand** ─ **$800**\n\n' +
+
+                '🔫 **Rust Cheats**\n' +
+                '├ 📅 **Monthly — Unbranded** ─ **$150**\n' +
+                '├ 📅 **Monthly — Full Rebrand** ─ **$200**\n' +
+                '├ ♾️ **Lifetime — Unbranded** ─ **$300**\n' +
+                '└ ♾️ **Lifetime — Full Rebrand** ─ **$800**\n\n' +
+
+                '━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
+                '🎁 **Bulk Key Discounts**\n' +
+                '━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
+                '💥 For resellers with consistent volume — enjoy exclusive price reductions on larger orders.\n' +
+                '🔥 **Purchase 10+ Keys and Get 60% OFF** (Unbranded Loaders)!\n'
             )
-            .setImage(LOGO_URL) // This puts your banner image at the bottom of the embed
+            .setImage(LOGO_URL)
             .setFooter({ text: 'NEXY Reseller Program', iconURL: LOGO_URL });
 
         try {
-            // 3. Send the embed to the channel
             await interaction.channel.send({ embeds: [embed] });
-            // 4. Confirm it was sent
-            await interaction.editReply({ content: 'Panel sent!' });
+            await interaction.editReply({ content: '✨ Panel sent!' });
         } catch (error) {
             console.error(error);
             await interaction.editReply({ content: 'There was an error sending the panel. Check the logs.' });
+        }
+    }
+
+    // ─────────────────────────── /TIMER ───────────────────────────
+    if (interaction.commandName === 'timer') {
+        await interaction.deferReply({ ephemeral: true });
+
+        const now = new Date();
+        const oneMonthLater = new Date(now);
+        oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
+
+        const nowUnix = Math.floor(now.getTime() / 1000);
+        const nextUnix = Math.floor(oneMonthLater.getTime() / 1000);
+
+        // Pretty formatted strings
+        const nowPretty = now.toLocaleString('en-GB', {
+            weekday: 'long', day: '2-digit', month: 'long', year: 'numeric',
+            hour: '2-digit', minute: '2-digit', timeZoneName: 'short'
+        });
+        const nextPretty = oneMonthLater.toLocaleString('en-GB', {
+            weekday: 'long', day: '2-digit', month: 'long', year: 'numeric',
+            hour: '2-digit', minute: '2-digit', timeZoneName: 'short'
+        });
+
+        const embed = new EmbedBuilder()
+            .setTitle('⏱️ NEXY — Timer')
+            .setColor('#FF10F0')
+            .setDescription(
+                '━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
+                '📅 **Current Date**\n' +
+                '━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
+                `> **${nowPretty}**\n` +
+                `> <t:${nowUnix}:R>\n\n` +
+
+                '━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
+                '⏳ **One Month From Now**\n' +
+                '━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
+                `> **${nextPretty}**\n` +
+                `> <t:${nextUnix}:R>\n\n` +
+
+                '━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
+                `🧮 **Total Days:** ${Math.round((nextUnix - nowUnix) / 86400)} days`
+            )
+            .setFooter({ text: 'NEXY Reseller Program', iconURL: LOGO_URL });
+
+        try {
+            await interaction.editReply({ embeds: [embed] });
+        } catch (error) {
+            console.error(error);
+            await interaction.editReply({ content: 'There was an error sending the timer.' });
         }
     }
 });
