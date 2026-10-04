@@ -13,8 +13,21 @@ const client = new Client({
 
 client.commands = new Collection();
 
-// Load commands
+// Create directories if they don't exist
 const commandsPath = path.join(__dirname, 'commands');
+const eventsPath = path.join(__dirname, 'events');
+
+if (!fs.existsSync(commandsPath)) {
+  fs.mkdirSync(commandsPath, { recursive: true });
+  console.log('📁 Created commands directory');
+}
+
+if (!fs.existsSync(eventsPath)) {
+  fs.mkdirSync(eventsPath, { recursive: true });
+  console.log('📁 Created events directory');
+}
+
+// Load commands
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 
 const commands = [];
@@ -50,7 +63,6 @@ for (const file of commandFiles) {
 })();
 
 // Load events
-const eventsPath = path.join(__dirname, 'events');
 const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
 
 for (const file of eventFiles) {
