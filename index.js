@@ -4,7 +4,7 @@ const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder, EmbedBuild
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 // REPLACE THIS WITH YOUR RAW GITHUB IMAGE LINK
-const LOGO_URL = 'https://github.com/od865718-svg/NEXY-resseller-/blob/6324acb9e3a1c2a5d9f9c583c84979f8948dc283/nexy%20banner%20(1).png'; 
+const LOGO_URL = 'PASTE_RAW_LINK_HERE'; 
 
 const commands = [
     new SlashCommandBuilder()
@@ -30,13 +30,15 @@ client.on('interactionCreate', async interaction => {
     if (!interaction.isChatInputCommand()) return;
     
     if (interaction.commandName === 'panel') {
+        // 1. Defer the reply immediately to stop the timeout
+        await interaction.deferReply({ ephemeral: true });
+
         const roleId = process.env.ROLE_ID || '1555865533226680320';
         
-        // Check if user has the specific role
-        if (!interaction.member.roles.cache.has(roleId)) {
-            return interaction.reply({ 
-                content: 'You do not have permission to use this command.', 
-                ephemeral: true 
+        // 2. Check if user has the specific role
+        if (!interaction.member || !interaction.member.roles.cache.has(roleId)) {
+            return interaction.editReply({ 
+                content: 'You do not have permission to use this command.' 
             });
         }
 
@@ -58,24 +60,24 @@ client.on('interactionCreate', async interaction => {
                 
                 '✅ **Panel Access**\n' +
                 '**General Spoofer**\n' +
-                '➳ Permanent Woofer ➳ $300 / Lifetime (Unbranded)\n' +
-                '➳ Permanent Woofer ➳ $800 / Lifetime (Full rebrand: name, logo, colors)\n' +
-                '➳ Permanent Woofer ➳ $150 / Monthly (Unbranded)\n' +
-                '➳ Permanent Woofer ➳ $200 / Monthly (Full rebrand: name, logo, colors)\n' +
-                '➳ Temp Woofer ➳ $150 / Monthly (Unbranded)\n' +
-                '➳ Temp Woofer ➳ $200 / Monthly (Full rebrand: name, logo, colors)\n\n' +
+                '🔹 Spoofer Hub | $300 / Lifetime (Unbranded)\n' +
+                '🔹 Spoofer Hub | $800 / Lifetime (Full rebrand: name, logo, colors)\n' +
+                '🔹 Spoofer Hub | $150 / Monthly (Unbranded)\n' +
+                '🔹 Spoofer Hub | $200 / Monthly (Full rebrand: name, logo, colors)\n' +
+                '🔹 Temp Spoofer | $150 / Monthly (Unbranded)\n' +
+                '🔹 Temp Spoofer | $200 / Monthly (Full rebrand: name, logo, colors)\n\n' +
                 
-                '**Fortnite Spoofer**\n' +
-                '➳ Permanent Woofer ➳ $300 / Lifetime (Unbranded)\n' +
-                '➳ Permanent Woofer ➳ $800 / Lifetime (Full rebrand: name, logo, colors)\n' +
-                '➳ Permanent Woofer ➳ $150 / Monthly (Unbranded)\n' +
-                '➳ Permanent Woofer ➳ $200 / Monthly (Full rebrand: name, logo, colors)\n\n' +
+                '**Fortnite Cheats**\n' +
+                '🔹 Spoofer Hub | $300 / Lifetime (Unbranded)\n' +
+                '🔹 Spoofer Hub | $800 / Lifetime (Full rebrand: name, logo, colors)\n' +
+                '🔹 Spoofer Hub | $150 / Monthly (Unbranded)\n' +
+                '🔹 Spoofer Hub | $200 / Monthly (Full rebrand: name, logo, colors)\n\n' +
                 
-                '**Rust Spoofer**\n' +
-                '➳ Permanent Woofer ➳ $300 / Lifetime (Unbranded)\n' +
-                '➳ Permanent Woofer ➳ $800 / Lifetime (Full rebrand: name, logo, colors)\n' +
-                '➳ Permanent Woofer ➳ $150 / Monthly (Unbranded)\n' +
-                '➳ Permanent Woofer ➳ $200 / Monthly (Full rebrand: name, logo, colors)\n\n' +
+                '**Rust Cheats**\n' +
+                '🔹 Spoofer Hub | $300 / Lifetime (Unbranded)\n' +
+                '🔹 Spoofer Hub | $800 / Lifetime (Full rebrand: name, logo, colors)\n' +
+                '🔹 Spoofer Hub | $150 / Monthly (Unbranded)\n' +
+                '🔹 Spoofer Hub | $200 / Monthly (Full rebrand: name, logo, colors)\n\n' +
                 
                 '✅ **Bulk Key Discounts**\n' +
                 'For resellers with consistent volume — enjoy exclusive price reductions on larger orders.\n' +
@@ -84,8 +86,15 @@ client.on('interactionCreate', async interaction => {
             .setImage(LOGO_URL) // This puts your banner image at the bottom of the embed
             .setFooter({ text: 'NEXY Reseller Program', iconURL: LOGO_URL });
 
-        await interaction.channel.send({ embeds: [embed] });
-        await interaction.reply({ content: 'Panel sent!', ephemeral: true });
+        try {
+            // 3. Send the embed to the channel
+            await interaction.channel.send({ embeds: [embed] });
+            // 4. Confirm it was sent
+            await interaction.editReply({ content: 'Panel sent!' });
+        } catch (error) {
+            console.error(error);
+            await interaction.editReply({ content: 'There was an error sending the panel. Check the logs.' });
+        }
     }
 });
 
