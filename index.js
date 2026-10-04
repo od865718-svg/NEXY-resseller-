@@ -4,7 +4,7 @@ const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder, EmbedBuild
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 // REPLACE THIS WITH YOUR RAW GITHUB IMAGE LINK
-const LOGO_URL = 'PASTE_RAW_LINK_HERE'; 
+const LOGO_URL = 'https://github.com/od865718-svg/NEXY-resseller-/blob/6324acb9e3a1c2a5d9f9c583c84979f8948dc283/nexy%20banner%20(1).png'; 
 
 const commands = [
     new SlashCommandBuilder()
